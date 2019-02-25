@@ -1,0 +1,34 @@
+version: ""
+security: null
+networking:
+  os: {}
+  kubernetes: {}
+services:
+  init:
+    cni: ${container_network_interface}
+  kubeadm:
+    configuration: |
+      apiVersion: kubeadm.k8s.io/v1beta1
+      kind: JoinConfiguration
+      controlPlane:
+        apiEndpoint:
+          advertiseAddress: ${api_endpoint}
+          bindPort: 6443
+      discovery:
+        bootstrapToken:
+          token: '${token}'
+          unsafeSkipCAVerification: true
+          apiServerEndpoint: ${control_plane_endpoint}:443
+      # TODO(andrewrynhard): How can we get the certificate's hash using only
+      # TF?
+      # discoveryTokenCACertHashes:
+      # - cert_hash
+      nodeRegistration:
+        taints: ${taints}
+        kubeletExtraArgs:
+          node-labels: ${labels}
+          feature-gates: ExperimentalCriticalPodAnnotation=true
+  trustd:
+    username: '${trustd_username}'
+    password: '${trustd_password}'
+    endpoints: ${trustd_endpoints}

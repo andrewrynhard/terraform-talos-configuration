@@ -1,0 +1,62 @@
+version: ""
+security:
+  os:
+    ca:
+      crt: ${os_ca_crt}
+      key: ${os_ca_key}
+  kubernetes:
+    ca:
+      crt: ${kubernetes_ca_crt}
+      key: ${kubernetes_ca_key}
+networking:
+  os: {}
+  kubernetes: {}
+services:
+  init:
+    cni: ${container_network_interface}
+  kubeadm:
+    configuration: |
+      apiVersion: kubeadm.k8s.io/v1beta1
+      kind: InitConfiguration
+      apiEndpoint:
+        advertiseAddress: ${api_endpoint}
+        bindPort: 6443
+      bootstrapTokens:
+      - token: '${token}'
+        ttl: 0s
+      nodeRegistration:
+        taints: ${taints}
+        kubeletExtraArgs:
+          node-labels: ${labels}
+          feature-gates: ExperimentalCriticalPodAnnotation=true
+      ---
+      apiVersion: kubeadm.k8s.io/v1beta1
+      kind: ClusterConfiguration
+      clusterName: ${cluster_name}
+      controlPlaneEndpoint: ${control_plane_endpoint}:443
+      apiServer:
+        certSANs: [ ${api_server_cert_sans} ]
+        extraArgs:
+          runtime-config: settings.k8s.io/v1alpha1=true
+          feature-gates: ExperimentalCriticalPodAnnotation=true
+      controllerManager:
+        extraArgs:
+          terminated-pod-gc-threshold: '100'
+          feature-gates: ExperimentalCriticalPodAnnotation=true
+      scheduler:
+        extraArgs:
+          feature-gates: ExperimentalCriticalPodAnnotation=true
+      networking:
+        dnsDomain: ${dns_domain}
+        podSubnet: ${pod_subnet}
+        serviceSubnet: ${service_subnet}
+      ---
+      apiVersion: kubeproxy.config.k8s.io/v1alpha1
+      kind: KubeProxyConfiguration
+      mode: ipvs
+      ipvs:
+        scheduler: lc
+  trustd:
+    username: '${trustd_username}'
+    password: '${trustd_password}'
+    endpoints: ${trustd_endpoints}
