@@ -32,3 +32,4 @@ services:
     username: '${trustd_username}'
     password: '${trustd_password}'
     endpoints: ${trustd_endpoints}
+    certSANs: [ ${api_endpoint} ]

@@ -25,7 +25,7 @@ data "template_file" "init_master" {
     os_ca_key                   = "${base64encode(var.talos_ca_key)}"
     trustd_username             = "${var.trustd_username}"
     trustd_password             = "${var.trustd_password}"
-    trustd_endpoints            = "[${count.index + 1 < length(var.master_hostnames) ? var.master_hostnames[count.index + 1] : ""}]"
+    trustd_endpoints            = "[${join(", ", slice(var.master_hostnames, 1, length(var.master_hostnames)))}]"
     container_network_interface = "${var.container_network_interface_plugin}"
   }
 }
@@ -42,7 +42,7 @@ data "template_file" "join_master" {
     kubernetes_ca_key      = "${base64encode(var.kubernetes_ca_key)}"
     token                  = "${var.kubernetes_token}"
     api_server_cert_sans   = "${join(", ", var.master_hostnames)}"
-    api_endpoint           = "${var.master_hostnames[count.index]}"
+    api_endpoint           = "${var.master_hostnames[count.index + 1]}"
     control_plane_endpoint = "${var.master_hostnames[0]}"
     taints                 = ""
     labels                 = ""
@@ -57,7 +57,7 @@ data "template_file" "join_master" {
     os_ca_key                   = "${base64encode(var.talos_ca_key)}"
     trustd_username             = "${var.trustd_username}"
     trustd_password             = "${var.trustd_password}"
-    trustd_endpoints            = "[${count.index + 1 < length(var.master_hostnames) ? var.master_hostnames[count.index + 1] : ""}]"
+    trustd_endpoints            = "[${var.master_hostnames[0]}]"
     container_network_interface = "${var.container_network_interface_plugin}"
   }
 }
