@@ -1,3 +1,7 @@
+locals {
+  joining_master_hostnames = "${slice(var.master_hostnames, 1, length(var.master_hostnames))}"
+}
+
 data "template_file" "init_master" {
   count = "1"
 
@@ -26,12 +30,13 @@ data "template_file" "init_master" {
     trustd_username             = "${var.trustd_username}"
     trustd_password             = "${var.trustd_password}"
     trustd_endpoints            = "[${join(", ", slice(var.master_hostnames, 1, length(var.master_hostnames)))}]"
+    trustd_next                 = "${var.master_hostnames[1]}"
     container_network_interface = "${var.container_network_interface_plugin}"
   }
 }
 
 data "template_file" "join_master" {
-  count = "${length(var.master_hostnames) - 1}"
+  count = "${length(local.joining_master_hostnames)}"
 
   template = "${file("${path.module}/templates/join-control-plane.yaml")}"
 
@@ -42,7 +47,7 @@ data "template_file" "join_master" {
     kubernetes_ca_key      = "${base64encode(var.kubernetes_ca_key)}"
     token                  = "${var.kubernetes_token}"
     api_server_cert_sans   = "${join(", ", var.master_hostnames)}"
-    api_endpoint           = "${var.master_hostnames[count.index + 1]}"
+    api_endpoint           = "${local.joining_master_hostnames[count.index]}"
     control_plane_endpoint = "${var.master_hostnames[0]}"
     taints                 = ""
     labels                 = ""
@@ -58,6 +63,7 @@ data "template_file" "join_master" {
     trustd_username             = "${var.trustd_username}"
     trustd_password             = "${var.trustd_password}"
     trustd_endpoints            = "[${var.master_hostnames[0]}]"
+    trustd_next                 = "${length(local.joining_master_hostnames) - 1 == count.index ? "" : element(local.joining_master_hostnames, count.index + 1)}"
     container_network_interface = "${var.container_network_interface_plugin}"
   }
 }
