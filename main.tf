@@ -30,7 +30,7 @@ data "template_file" "init_master" {
     trustd_username             = "${var.trustd_username}"
     trustd_password             = "${var.trustd_password}"
     trustd_endpoints            = "[${join(", ", slice(var.master_hostnames, 1, length(var.master_hostnames)))}]"
-    trustd_next                 = "${var.master_hostnames[1]}"
+    trustd_next                 = "${length(var.master_hostnames) > 1 ? element(var.master_hostnames, 1) : ""}"
     container_network_interface = "${var.container_network_interface_plugin}"
   }
 }
