@@ -15,6 +15,7 @@ services:
   init:
     cni: ${container_network_interface}
   kubeadm:
+    certificateKey: '${certificate_key}'
     configuration: |
       apiVersion: kubeadm.k8s.io/v1beta1
       kind: InitConfiguration
@@ -60,5 +61,4 @@ services:
     username: '${trustd_username}'
     password: '${trustd_password}'
     endpoints: ${trustd_endpoints}
-    next: ${trustd_next}
     certSANs: [ ${api_endpoint} ]

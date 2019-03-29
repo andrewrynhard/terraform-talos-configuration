@@ -23,6 +23,10 @@ variable "kubernetes_token" {
   description = "The kubeadm token"
 }
 
+variable "kubernetes_certificate_key" {
+  description = "The kubeadm certificate key"
+}
+
 variable "kubernetes_ca_crt" {
   description = "The PEM encoded Kubernetes certificate"
 }
