@@ -1,8 +1,5 @@
 version: ""
 security: null
-networking:
-  os: {}
-  kubernetes: {}
 services:
   init:
     cni: ${container_network_interface}
@@ -12,7 +9,7 @@ services:
       apiVersion: kubeadm.k8s.io/v1beta1
       kind: JoinConfiguration
       controlPlane:
-        apiEndpoint:
+        localAPIEndpoint:
           advertiseAddress: ${api_endpoint}
           bindPort: 6443
       discovery:

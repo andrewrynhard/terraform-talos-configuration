@@ -30,13 +30,13 @@ data "template_file" "init_master" {
     os_ca_key                   = "${base64encode(var.talos_ca_key)}"
     trustd_username             = "${var.trustd_username}"
     trustd_password             = "${var.trustd_password}"
-    trustd_endpoints            = "[${join(", ", slice(var.master_hostnames, 1, length(var.master_hostnames)))}]"
+    trustd_endpoints            = "[ ${join(", ", slice(var.master_hostnames, 1, length(var.master_hostnames)))} ]"
     container_network_interface = "${var.container_network_interface_plugin}"
   }
 }
 
 data "template_file" "join_master" {
-  count = "${length(local.joining_master_hostnames)}"
+  count = 2
 
   template = "${file("${path.module}/templates/join-control-plane.yaml")}"
 
@@ -63,7 +63,7 @@ data "template_file" "join_master" {
     os_ca_key                   = "${base64encode(var.talos_ca_key)}"
     trustd_username             = "${var.trustd_username}"
     trustd_password             = "${var.trustd_password}"
-    trustd_endpoints            = "[${var.master_hostnames[0]}]"
+    trustd_endpoints            = "[ ${var.master_hostnames[0]} ]"
     trustd_bootstrap_node       = "${var.master_hostnames[0]}"
     container_network_interface = "${var.container_network_interface_plugin}"
   }
@@ -95,7 +95,7 @@ data "template_file" "worker" {
 
     trustd_username             = "${var.trustd_username}"
     trustd_password             = "${var.trustd_password}"
-    trustd_endpoints            = "[${join(", ", var.master_hostnames)}]"
+    trustd_endpoints            = "[ ${join(", ", var.master_hostnames)} ]"
     container_network_interface = "${var.container_network_interface_plugin}"
   }
 }

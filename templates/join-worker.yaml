@@ -1,8 +1,5 @@
 version: ""
 security: null
-networking:
-  os: {}
-  kubernetes: {}
 services:
   init:
     cni: ${container_network_interface}
