@@ -25,7 +25,7 @@ services:
         taints: ${taints}
         kubeletExtraArgs:
           node-labels: ${labels}
-          feature-gates: ExperimentalCriticalPodAnnotation=true
+          feature-gates: ExperimentalCriticalPodAnnotation=true,TTLAfterFinished=true
   trustd:
     username: '${trustd_username}'
     password: '${trustd_password}'

@@ -26,7 +26,7 @@ services:
         taints: ${taints}
         kubeletExtraArgs:
           node-labels: ${labels}
-          feature-gates: ExperimentalCriticalPodAnnotation=true
+          feature-gates: ExperimentalCriticalPodAnnotation=true,TTLAfterFinished=true
       ---
       apiVersion: kubeadm.k8s.io/v1beta1
       kind: ClusterConfiguration
@@ -36,14 +36,14 @@ services:
         certSANs: [ ${api_server_cert_sans} ]
         extraArgs:
           runtime-config: settings.k8s.io/v1alpha1=true
-          feature-gates: ExperimentalCriticalPodAnnotation=true
+          feature-gates: ExperimentalCriticalPodAnnotation=true,TTLAfterFinished=true
       controllerManager:
         extraArgs:
           terminated-pod-gc-threshold: '100'
-          feature-gates: ExperimentalCriticalPodAnnotation=true
+          feature-gates: ExperimentalCriticalPodAnnotation=true,TTLAfterFinished=true
       scheduler:
         extraArgs:
-          feature-gates: ExperimentalCriticalPodAnnotation=true
+          feature-gates: ExperimentalCriticalPodAnnotation=true,TTLAfterFinished=true
       networking:
         dnsDomain: ${dns_domain}
         podSubnet: ${pod_subnet}
